@@ -1,6 +1,6 @@
 # VitaminBase
 
-AngularJS application styled with SASS/Bootstrap, on NodeJS. Designed by [planlodge](http://planlodge.com).
+AngularJS application styled with SASS/Bootstrap 3, on NodeJS. Designed by [planlodge](http://planlodge.com).
 
 [![Build Status](https://travis-ci.org/stevenbenner/jquery-powertip.svg?branch=master)](https://travis-ci.org/stevenbenner/jquery-powertip)
 ![License](https://img.shields.io/packagist/l/doctrine/orm.svg)
@@ -10,9 +10,9 @@ AngularJS application styled with SASS/Bootstrap, on NodeJS. Designed by [planlo
 > Vitamin database filled with stats and information on related vitamins
 
 ## Features
-- Choose Different types of phones and chargers and get charge time calculation
-- Add items to shopping cart
-- Responsive
+- Search different vitamins and view dosages 
+- View food sources, overdose symptoms and treatments.
+- Find other comparable vitamins and search between fat and water soluable
 
 ## License
 
