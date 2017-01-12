@@ -1,0 +1,370 @@
+doctype html
+html(lang='en-US')
+  head
+    title Vitamin App
+    meta(charset='utf-8')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css')
+    link(rel='shortcut icon', type='image/png', href='http://pngimg.com/upload/carrot_PNG4997.png')
+    link(rel='stylesheet', href='stylesheets/main.css')
+  body#top(ng-app='VitaminApp', ng-controller='VitaminController', ng-cloak='')
+    .container-fluid.col-md-10.col-offset-2
+      .page-header.row.col-md-12
+        div(ng-if='showDetails===false')
+          h1
+            | Vitamin {{detailVitamin.VitaminName}}
+            small {{detailVitamin.ChemicalName}}
+            a.btn.btn-success.pull-right(data-toggle='tooltip', data-placement='top', title='Return to Vitamin Table', href='', ng-click='showList();') Back to List
+        h1(ng-if='showTable===false')
+          | Vitamins
+          small Vitamin Table
+      .row.col-md-12(ng-hide='showDetails')
+        .col-md-4
+          span(data-toggle='tooltip', data-placement='top', title='Vitamin {{detailVitamin.VitaminName}}')
+            img.img-rounded(ng-src='{{detailVitamin.Image}}', width='250', alt='{{detailVitamin.VitaminName}}')
+          h2 Description:
+          p {{detailVitamin.Description}}
+          h2 Food Sources:
+          p {{detailVitamin.FoodSources}}
+          h2 Treatments:
+          p {{detailVitamin.UsedFor}}
+          h2 Recommended Dosage:
+          p {{detailVitamin.Recommended}}{{detailVitamin.Measurement | uppercase}}
+          h2 Overdose Symptoms:
+          p {{detailVitamin.Overdose}}
+          h2 Soluable In:
+          p {{detailVitamin.Solubility}}
+        .col-md-8
+          // normal tabs with fades
+          .row.col-md-12
+            // Nav tabs
+            ul.nav.nav-tabs(role='tablist')
+              li.active.tabs(ng-if="detailVitamin.Solubility=='Fat'", role='presentation')
+                a(href='#fatWater', aria-controls='fatWater', role='tab', data-toggle='tab') Fat Soluable
+              li.active.tabs(ng-if="detailVitamin.Solubility=='Water'", role='presentation')
+                a(href='#fatWater', aria-controls='fatWater', role='tab', data-toggle='tab') Water Soluable
+              li(role='presentation')
+                a.tabs(href='#other', aria-controls='other', role='tab', data-toggle='tab') Other Vitamins
+            // Tab panes
+            .tab-content
+              #fatWater.tab-pane.fade.in.active(role='tabpanel')
+                div(ng-if="detailVitamin.Solubility=='Fat'")
+                  h5 Other Fat Soluable Vitamins:
+                  span.label.label-default(ng-class="{'label-danger': vFilteredFats.length==0}") {{vFilteredFats.length}} Vitamins
+                  .table-responsive
+                    table.table.table-hover.table-striped
+                      th Icon
+                      th(ng-click="sorter('vitaminName')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Vitamin Name') Name
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'vitaminName' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'vitaminName' && sortReverse")
+                      th(ng-click="sorter('ChemicalName')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Chemical Name') Chemical Name
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'ChemicalName' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'ChemicalName' && sortReverse")
+                      th(ng-click="sorter('Solubility')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Solubility') Solubility
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'Solubility' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'Solubility' && sortReverse")
+                      th(ng-click="sorter('Recommended')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Recommended Allowance') Recommended
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'Recommended' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'Recommended' && sortReverse")
+                      th(ng-click="sorter('UsedFor')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Usage or Treatment') Usage/Treatment
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'UsedFor' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'UsedFor' && sortReverse")
+                      tr.item(data-ng-repeat='fats in vFilteredFats = (fatSoluable | orderBy: sortByItem:sortReverse)')
+                        td.clickable(ng-click='detailPage(fats)')
+                          img(ng-src='{{fats.Image}}', width='50')
+                        td.clickable(ng-click='detailPage(fats)') {{fats.VitaminName}}
+                        td.clickable(ng-click='detailPage(fats)') {{fats.ChemicalName}}
+                        td {{fats.Solubility}}
+                        td {{fats.Recommended}} {{fats.Measurement}}
+                        td {{fats.UsedFor}}
+                      tr(ng-if='vFilteredFats.length==0')
+                        td No Vitamins Found.
+                div(ng-if="detailVitamin.Solubility=='Water'")
+                  h5 Other Water Soluable Vitamins:
+                  span.label.label-default(ng-class="{'label-danger': vFilteredFats.length==0}") {{vFilteredFats.length}} Vitamins
+                  .table-responsive
+                    table.table.table-hover.table-striped
+                      th Icon
+                      th(ng-click="sorter('vitaminName')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Vitamin Name') Name
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'vitaminName' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'vitaminName' && sortReverse")
+                      th(ng-click="sorter('ChemicalName')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Chemical Name') Chemical Name
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'ChemicalName' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'ChemicalName' && sortReverse")
+                      th(ng-click="sorter('Solubility')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Solubility') Solubility
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'Solubility' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'Solubility' && sortReverse")
+                      th(ng-click="sorter('Recommended')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Recommended Allowance') Recommended
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'Recommended' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'Recommended' && sortReverse")
+                      th(ng-click="sorter('UsedFor')")
+                        span(data-toggle='tooltip', data-placement='top', title='Sort By Usage or Treatment') Usage/Treatment
+                        span.fa.fa-caret-down(ng-show="sortByItem == 'UsedFor' && !sortReverse")
+                        span.fa.fa-caret-up(ng-show="sortByItem == 'UsedFor' && sortReverse")
+                      tr.item(data-ng-repeat='water in vFilteredFats = (waterSoluable | orderBy: sortByItem:sortReverse)')
+                        td.clickable(ng-click='detailPage(water)')
+                          img(ng-src='{{water.Image}}', width='50')
+                        td.clickable(ng-click='detailPage(water)') {{water.VitaminName}}
+                        td.clickable(ng-click='detailPage(water)') {{water.ChemicalName}}
+                        td {{water.Solubility}}
+                        td {{water.Recommended}} {{water.Measurement}}
+                        td {{water.UsedFor}}
+                      tr(ng-if='vFilteredFats.length==0')
+                        td No Vitamins Found.
+              #other.tab-pane.fade(role='tabpanel')
+                .table-responsive
+                  table.table.table-hover.table-striped
+                    th Icon
+                    th(ng-click="sorter('vitaminName')")
+                      span(data-toggle='tooltip', data-placement='top', title='Sort By Vitamin Name') Name
+                      span.fa.fa-caret-down(ng-show="sortByItem == 'vitaminName' && !sortReverse")
+                      span.fa.fa-caret-up(ng-show="sortByItem == 'vitaminName' && sortReverse")
+                    th(ng-click="sorter('ChemicalName')")
+                      span(data-toggle='tooltip', data-placement='top', title='Sort By Chemical Name') Chemical Name
+                      span.fa.fa-caret-down(ng-show="sortByItem == 'ChemicalName' && !sortReverse")
+                      span.fa.fa-caret-up(ng-show="sortByItem == 'ChemicalName' && sortReverse")
+                    th(ng-click="sorter('Solubility')")
+                      span(data-toggle='tooltip', data-placement='top', title='Sort By Solubility') Solubility
+                      span.fa.fa-caret-down(ng-show="sortByItem == 'Solubility' && !sortReverse")
+                      span.fa.fa-caret-up(ng-show="sortByItem == 'Solubility' && sortReverse")
+                    th(ng-click="sorter('Recommended')")
+                      span(data-toggle='tooltip', data-placement='top', title='Sort By Recommended Allowance') Recommended
+                      span.fa.fa-caret-down(ng-show="sortByItem == 'Recommended' && !sortReverse")
+                      span.fa.fa-caret-up(ng-show="sortByItem == 'Recommended' && sortReverse")
+                    th(ng-click="sorter('UsedFor')")
+                      span(data-toggle='tooltip', data-placement='top', title='Sort By Usage or Treatment') Usage/Treatment
+                      span.fa.fa-caret-down(ng-show="sortByItem == 'UsedFor' && !sortReverse")
+                      span.fa.fa-caret-up(ng-show="sortByItem == 'UsedFor' && sortReverse")
+                    tr.item(data-ng-repeat='random in vFilteredSamples = (randomSamples | orderBy: sortByItem:sortReverse)')
+                      td.clickable(ng-click='detailPage(random)')
+                        img(ng-src='{{random.Image}}', width='50')
+                      td.clickable(ng-click='detailPage(random)') {{random.VitaminName}}
+                      td.clickable(ng-click='detailPage(random)') {{random.ChemicalName}}
+                      td {{random.Solubility}}
+                      td {{random.Recommended}} {{random.Measurement}}
+                      td {{random.UsedFor}}
+                    tr(ng-if='vFilteredSamples.length==0')
+                      td No Vitamins Found.
+      .row.col-md-12(ng-hide='showTable')
+        .form-group
+          label(for='vitaminBox') Search Vitamins:
+          input#vitaminBox.form-control(type='text', ng-model='vSearch', placeholder='Search..', data-toggle='tooltip', data-placement='top', title='Search Vitamins')
+        .col-md-12
+          .form-group.col-md-2
+            .checkbox
+              label
+                input(type='checkbox', ng-model='fatCheck', ng-click="solubility('Fat')")
+                |  Fat Soluable
+          .form-group.col-md-2
+            .checkbox
+              label
+                input(type='checkbox', ng-model='waterCheck', ng-click="solubility('Water')")
+                |  Water Soluable
+          .form-group.col-md-2
+            .checkbox
+              label
+                input(type='checkbox')
+                |  Check me out
+        span.label.label-default(ng-class="{'label-danger': vFiltered.length==0}") {{vFiltered.length}} Vitamins
+        .table-responsive
+          table.table.table-hover.table-striped
+            th Icon
+            th(ng-click="sorter('vitaminName')")
+              span(data-toggle='tooltip', data-placement='top', title='Sort By Vitamin Name') Name
+              span.fa.fa-caret-down(ng-show="sortByItem == 'vitaminName' && !sortReverse")
+              span.fa.fa-caret-up(ng-show="sortByItem == 'vitaminName' && sortReverse")
+            th(ng-click="sorter('ChemicalName')")
+              span(data-toggle='tooltip', data-placement='top', title='Sort By Chemical Name') Chemical Name
+              span.fa.fa-caret-down(ng-show="sortByItem == 'ChemicalName' && !sortReverse")
+              span.fa.fa-caret-up(ng-show="sortByItem == 'ChemicalName' && sortReverse")
+            th(ng-click="sorter('Solubility')")
+              span(data-toggle='tooltip', data-placement='top', title='Sort By Solubility') Solubility
+              span.fa.fa-caret-down(ng-show="sortByItem == 'Solubility' && !sortReverse")
+              span.fa.fa-caret-up(ng-show="sortByItem == 'Solubility' && sortReverse")
+            th(ng-click="sorter('Recommended')")
+              span(data-toggle='tooltip', data-placement='top', title='Sort By Recommended Allowance') Recommended
+              span.fa.fa-caret-down(ng-show="sortByItem == 'Recommended' && !sortReverse")
+              span.fa.fa-caret-up(ng-show="sortByItem == 'Recommended' && sortReverse")
+            th(ng-click="sorter('UsedFor')")
+              span(data-toggle='tooltip', data-placement='top', title='Sort By Usage or Treatment') Usage/Treatment
+              span.fa.fa-caret-down(ng-show="sortByItem == 'UsedFor' && !sortReverse")
+              span.fa.fa-caret-up(ng-show="sortByItem == 'UsedFor' && sortReverse")
+            tr.item(data-ng-repeat='vitamin in vFiltered = (vitamins | filter: vSearch | orderBy: sortByItem:sortReverse)')
+              td.clickable(ng-click='detailPage(vitamin)')
+                img(ng-src='{{vitamin.Image}}', width='50')
+              td.clickable(ng-click='detailPage(vitamin)') {{vitamin.VitaminName}}
+              td.clickable(ng-click='detailPage(vitamin)') {{vitamin.ChemicalName}}
+              td {{vitamin.Solubility}}
+              td {{vitamin.Recommended}} {{vitamin.Measurement}}
+              td {{vitamin.UsedFor}}
+            tr(ng-if='vFiltered.length==0')
+              td No Vitamins Found.
+    footer.footer.col-md-12
+      .container
+        h3 Vitamin App © 2016
+    // scroll to top
+    .scroll-up(data-toggle='tooltip', title='Back to Top')
+      a(href='#top')
+        i.fa.fa-arrow-up
+    #loader(ng-hide='notLoading')
+      .overlay
+      #page
+        #phrase_box
+          svg(width='100%', height='100%')
+            defs
+              //
+                <style type="text/css">
+                @font-face {
+                font-family: "Proxima";
+                src: url('');
+                }
+                </style>
+              mask#mask(maskunits='userSpaceOnUse', maskcontentunits='userSpaceOnUse')
+                lineargradient#linearGradient(gradientunits='objectBoundingBox', x2='0', y2='1')
+                  stop(stop-color='white', stop-opacity='0', offset='0%')
+                  stop(stop-color='white', stop-opacity='1', offset='30%')
+                  stop(stop-color='white', stop-opacity='1', offset='70%')
+                  stop(stop-color='white', stop-opacity='0', offset='100%')
+                rect(width='100%', height='100%', fill='url(#linearGradient)')
+            g(width='100%', height='100%', style='mask: url(#mask);')
+              g#phrases
+    #loader2
+      .ajax-spinner-bars
+        .bar-1
+        .bar-2
+        .bar-3
+        .bar-4
+        .bar-5
+        .bar-6
+        .bar-7
+        .bar-8
+        .bar-9
+        .bar-10
+        .bar-11
+        .bar-12
+        .bar-13
+        .bar-14
+        .bar-15
+        .bar-16
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular-animate.min.js')
+    script(src='\
+    https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.5.8/angular-sanitize.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js')
+    script(src='javascripts/app.js')
+    script(src='javascripts/main.js')
+    script.
+      // javascript
+      var checkmarkIdPrefix = "loadingCheckSVG-";
+      var checkmarkCircleIdPrefix = "loadingCheckCircleSVG-";
+      var verticalSpacing = 50;
+      function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+        }
+        return array;
+      }
+      function createSVG(tag, properties, opt_children) {
+        var newElement = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for(prop in properties) {
+          newElement.setAttribute(prop, properties[prop]);
+        }
+        if (opt_children) {
+          opt_children.forEach(function(child) {
+            newElement.appendChild(child);
+          })
+        }
+        return newElement;
+      }
+      function createPhraseSvg(phrase, yOffset) {
+        var text = createSVG("text", {
+          fill: "white",
+          x: 50,
+          y: yOffset,
+          "font-size": 18,
+          "font-family": "Arial"
+        });
+        text.appendChild(document.createTextNode(phrase + "..."));
+        return text;
+      }
+      function createCheckSvg(yOffset, index) {
+        var check = createSVG("polygon", {
+          points: "21.661,7.643 13.396,19.328 9.429,15.361 7.075,17.714 13.745,24.384 24.345,9.708 ",
+          fill: "rgba(255,255,255,1)",
+          id: checkmarkIdPrefix + index
+        });
+        var circle_outline = createSVG("path", {
+          d: "M16,0C7.163,0,0,7.163,0,16s7.163,16,16,16s16-7.163,16-16S24.837,0,16,0z M16,30C8.28,30,2,23.72,2,16C2,8.28,8.28,2,16,2 c7.72,0,14,6.28,14,14C30,23.72,23.72,30,16,30z",
+          fill: "white"
+        })
+        var circle = createSVG("circle", {
+          id: checkmarkCircleIdPrefix + index,
+          fill: "rgba(255,255,255,0)",
+          cx: 16,
+          cy: 16,
+          r: 15
+        })
+        var group = createSVG("g", {
+          transform: "translate(10 " + (yOffset - 20) + ") scale(.9)"
+        }, [circle, check, circle_outline]);
+        return group;
+      }
+      function addPhrasesToDocument(phrases) {
+        phrases.forEach(function(phrase, index) {
+          var yOffset = 30 + verticalSpacing * index;
+          document.getElementById("phrases").appendChild(createPhraseSvg(phrase, yOffset));
+          document.getElementById("phrases").appendChild(createCheckSvg(yOffset, index));
+        });
+      }
+      function easeInOut(t) {
+        var period = 200;
+        return (Math.sin(t / period + 100) + 1) /2;
+      }
+      document.addEventListener("DOMContentLoaded", function(event) {
+        var phrases = shuffleArray([
+          "Gathering Vitamins",
+          "Sorting Vitamins",
+          "Collecting Results",
+          "Adding Vitamin UI",
+          "Copying Dosages",
+          "Writing Descriptions"]);
+        addPhrasesToDocument(phrases);
+        var start_time = new Date().getTime();
+        var upward_moving_group = document.getElementById("phrases");
+        upward_moving_group.currentY = 0;
+        var checks = phrases.map(function(_, i) {
+          return {check: document.getElementById(checkmarkIdPrefix + i), circle: document.getElementById(checkmarkCircleIdPrefix + i)};
+        });
+        function animateLoading() {
+          var now = new Date().getTime();
+          upward_moving_group.setAttribute("transform", "translate(0 " + upward_moving_group.currentY + ")");
+          upward_moving_group.currentY -= 1.35 * easeInOut(now);
+          checks.forEach(function(check, i) {
+            var color_change_boundary = - i * verticalSpacing + verticalSpacing + 15;
+            if (upward_moving_group.currentY < color_change_boundary) {
+              var alpha = Math.max(Math.min(1 - (upward_moving_group.currentY - color_change_boundary + 15)/30, 1), 0);
+              check.circle.setAttribute("fill", "rgba(255, 255, 255, " + alpha + ")");
+              var check_color = [Math.round(255 * (1-alpha) + 120 * alpha), Math.round(255 * (1-alpha) + 154 * alpha)];
+              check.check.setAttribute("fill", "rgba(255, " + check_color[0] + "," + check_color[1] + ", 1)");
+            }
+          })
+          if (now - start_time < 30000 && upward_moving_group.currentY > -710) {
+            requestAnimationFrame(animateLoading);
+          }
+        }
+        animateLoading();
+      });
