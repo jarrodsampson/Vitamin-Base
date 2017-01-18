@@ -5,6 +5,8 @@ AngularJS application styled with SASS/Bootstrap 3, on NodeJS. Designed by [plan
 [![Build Status](https://travis-ci.org/stevenbenner/jquery-powertip.svg?branch=master)](https://travis-ci.org/stevenbenner/jquery-powertip)
 ![License](https://img.shields.io/packagist/l/doctrine/orm.svg)
 
+![Image](https://github.com/planlodge/Vitamin-Base/blob/master/public/images/screen3.png?raw=true)
+
 ## Description
 
 > Vitamin database filled with stats and information on related vitamins
